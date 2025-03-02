@@ -119,20 +119,3 @@ Modify `gocs-implementation.js` to adjust the core mutation engine, or extend fu
 ## License
 
 MIT
-
----
-
-## File Descriptions
-
-- **gocs-implementation.js**: Core GOCS mutation engine implementation
-- **gocs-extensions.js**: Advanced mutations (phonetic, epigenetic, multilingual)
-- **gocs-cli.js**: Command-line interface for processing text files
-- **gocs-web-interface.html**: Browser-based interactive interface
-- **README.md**: This documentation file
-
-## Future Directions
-
-1. **Context-Sensitive Mutations**: Mutations that depend on surrounding words
-2. **Historical Text Evolution**: Model multiple generations of mutations 
-3. **Pattern Recognition**: Detect and preserve poetic structures during mutation
-4. **Poetry-Specific Modes**: Special handling for meter, rhyme, and other poetic features
