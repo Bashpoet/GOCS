@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetic Oulipian Constraint System</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f9;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            font-family: 'Helvetica Neue', sans-serif;
+            color: #2c3e50;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 1rem;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .options {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .matrix {
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            background-color: #ffffcc;
+            padding: 0 2px;
+        }
+        .info-panel {
+            background-color: #e8f4f8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .settings label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .settings input, .settings select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            margin-bottom: 1rem;
+        }
+        .tab button {
+            background-color: inherit;
+            color: #333;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+        .default-visible {
+            display: block;
+        }
+        .mutations {
+            margin-top: 1rem;
+            border-left: 3px solid #3498db;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Genetic Oulipian Constraint System</h1>
+        <p>A text mutation engine based on genomic transition patterns</p>
+    </div>
+
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'Mutator')">Text Mutator</button>
+        <button class="tablinks" onclick="openTab(event, 'About')">About GOCS</button>
+        <button class="tablinks" onclick="openTab(event, 'Settings')">Advanced Settings</button>
+    </div>
+
+    <div id="Mutator" class="tabcontent default-visible">
+        <div class="container">
+            <div>
+                <h2>Original Text</h2>
+                <textarea id="originalText" placeholder="Enter text to mutate...">The poet gazes at the ocean and sighs.</textarea>
+                <button id="mutateBtn">Mutate Text</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+            <div>
+                <h2>Mutated Text</h2>
+                <textarea id="mutatedText" readonly></textarea>
+                <div class="mutations" id="mutationLog"></div>
+            </div>
+        </div>
+
+        <div class="matrix">
+            <h3>Transition Matrix</h3>
+            <table id="matrixTable">
+                <tr>
+                    <th></th>
+                    <th>A (e,a)</th>
+                    <th>G (r,n,s)</th>
+                    <th>C (k,t)</th>
+                    <th>T (o,i)</th>
+                </tr>
+                <tr>
+                    <th>From A</th>
+                    <td>40%</td>
+                    <td>40%</td>
+                    <td>10%</td>
+                    <td>10%</td>
+                </tr>
+                <tr>
+                    <th>From G</th>
+                    <td>40%</td>
+                    <td>40%</td>
+                    <td>10%</td>
+                    <td>10%</td>
+                </tr>
+                <tr>
+                    <th>From C</th>
+                    <td>10%</td>
+                    <td>10%</td>
+                    <td>40%</td>
+                    <td>40%</td>
+                </tr>
+                <tr>
+                    <th>From T</th>
+                    <td>10%</td>
+                    <td>10%</td>
+                    <td>40%</td>
+                    <td>40%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="About" class="tabcontent">
+        <h2>About Genetic Oulipian Constraint System (GOCS)</h2>
+        <div class="info-panel">
+            <p>GOCS is a fusion of genomic mechanisms and Oulipian literary constraints, creating a system for systematically mutating text using principles borrowed from genetics.</p>
+            
+            <h3>Core Concepts:</h3>
+            <ol>
+                <li><strong>Nucleotide Mapping:</strong> Letters are mapped to DNA nucleotides (A, G, C, T) based on frequency patterns</li>
+                <li><strong>Transition Matrix:</strong> Text mutations follow genomic transition probabilities (A→G transitions are more common than A→C transversions)</li>
+                <li><strong>Indels:</strong> Insertions and deletions occur at specific intervals, mimicking genomic indels</li>
+                <li><strong>Haplotypes:</strong> Certain word clusters mutate as a single unit, preserving their internal structure</li>
+                <li><strong>Selection Filter:</strong> A coherence mechanism ensures mutated text retains some relationship to the original</li>
+            </ol>
+        </div>
+        
+        <h3>Oulipo Connection</h3>
+        <p>The Oulipo (Ouvroir de littérature potentielle) is a group of writers and mathematicians who create works using constrained writing techniques. GOCS continues this tradition by imposing rigorous, systematic constraints based on genetic principles rather than purely arbitrary rules.</p>
+        
+        <h3>Example Mutations</h3>
+        <p>Original: <span class="highlight">"The poet gazes at the ocean and sighs."</span></p>
+        <p>Mutated: <span class="highlight">"Thg pget gczes gst th otegn gnd sghs."</span></p>
+        <p>Readable: <span class="highlight">"The poet gazes gusts there ocean and sighs."</span></p>
+    </div>
+
+    <div id="Settings" class="tabcontent">
+        <h2>Advanced GOCS Settings</h2>
+        <div class="settings">
+            <div>
+                <h3>Mutation Rates</h3>
+                <label for="wordMutationRate">Word Mutation Rate</label>
+                <input type="range" id="wordMutationRate" min="0" max="100" value="70">
+                
+                <label for="indelRate">Indel Frequency</label>
+                <input type="range" id="indelRate" min="0" max="100" value="50">
+                
+                <label for="silentMutationRate">Silent Mutation Rate</label>
+                <input type="range" id="silentMutationRate" min="0" max="100" value="20">
+            </div>
+            <div>
+                <h3>Haplotype Settings</h3>
+                <label for="customHaplotypes">Custom Haplotypes (comma separated)</label>
+                <input type="text" id="customHaplotypes" placeholder="e.g., once upon a time, in the beginning">
+                
+                <h3>Extensions</h3>
+                <label for="extensionType">Apply Extension</label>
+                <select id="extensionType">
+                    <option value="none">None</option>
+                    <option value="phonetic">Phonetic Rules</option>
+                    <option value="epigenetic">Epigenetic Patterns</option>
+                    <option value="multilingual">Multilingual</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Simple GOCS implementation for the demo
+        class SimpleGOCS {
+            constructor() {
+                this.nucleotideMap = {
+                    A: ['e', 'a'],
+                    G: ['r', 'n', 's'],
+                    C: ['k', 't'],
+                    T: ['o', 'i']
+                };
+                
+                this.reverseMap = {};
+                for (const [nucleotide, letters] of Object.entries(this.nucleotideMap)) {
+                    for (const letter of letters) {
+                        this.reverseMap[letter] = nucleotide;
+                    }
+                }
+                
+                this.transitionMatrix = {
+                    A: { G: 0.4, C: 0.1, T: 0.1, A: 0.4 },
+                    G: { A: 0.4, C: 0.1, T: 0.1, G: 0.4 },
+                    C: { T: 0.4, A: 0.1, G: 0.1, C: 0.4 },
+                    T: { C: 0.4, A: 0.1, G: 0.1, T: 0.4 }
+                };
+                
+                this.mutations = [];
+            }
+            
+            getRandomTransition(nucleotide) {
+                const rand = Math.random();
+                let cumulative = 0;
+                
+                for (const [target, prob] of Object.entries(this.transitionMatrix[nucleotide])) {
+                    cumulative += prob;
+                    if (rand <= cumulative) {
+                        return target;
+                    }
+                }
+                
+                return nucleotide;
+            }
+            
+            getRandomLetterFromNucleotide(nucleotide) {
+                const letters = this.nucleotideMap[nucleotide];
+                return letters[Math.floor(Math.random() * letters.length)];
+            }
+            
+            mutateText(text) {
+                this.mutations = [];
+                const words = text.split(' ');
+                const mutatedWords = [];
+                
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    let mutatedWord = this.mutateWord(word, (i % 3 === 0));
+                    
+                    // Apply indels
+                    if ((i % 5 === 0) && word.length > 2) {
+                        const oldWord = mutatedWord;
+                        mutatedWord = this.applyIndel(mutatedWord, 'deletion');
+                        this.mutations.push(`Deletion: "${oldWord}" → "${mutatedWord}"`);
+                    }
+                    if ((i % 4 === 0)) {
+                        const oldWord = mutatedWord;
+                        mutatedWord = this.applyIndel(mutatedWord, 'insertion');
+                        this.mutations.push(`Insertion: "${oldWord}" → "${mutatedWord}"`);
+                    }
+                    
+                    mutatedWords.push(mutatedWord);
+                }
+                
+                // Apply silent mutations (syntax reordering)
+                if (mutatedWords.length > 2 && Math.random() < 0.2) {
+                    const pos = Math.floor(Math.random() * (mutatedWords.length - 1));
+                    const temp = mutatedWords[pos];
+                    mutatedWords[pos] = mutatedWords[pos + 1];
+                    mutatedWords[pos + 1] = temp;
+                    this.mutations.push(`Silent mutation: Word order swapped at position ${pos}`);
+                }
+                
+                return mutatedWords.join(' ');
+            }
+            
+            mutateWord(word, isHighMutationZone) {
+                const maxMutations = isHighMutationZone ? 2 : 1;
+                let mutationCount = 0;
+                let result = '';
+                
+                for (let i = 0; i < word.length; i++) {
+                    const letter = word[i].toLowerCase();
+                    
+                    // Check if letter maps to nucleotide
+                    if (this.reverseMap[letter] && mutationCount < maxMutations) {
+                        const nucleotide = this.reverseMap[letter];
+                        const targetNucleotide = this.getRandomTransition(nucleotide);
+                        
+                        if (targetNucleotide !== nucleotide) {
+                            const newLetter = this.getRandomLetterFromNucleotide(targetNucleotide);
+                            result += newLetter;
+                            mutationCount++;
+                            this.mutations.push(`Mutation: "${letter}" → "${newLetter}" (${nucleotide}→${targetNucleotide})`);
+                            continue;
+                        }
+                    }
+                    
+                    result += word[i];
+                }
+                
+                return result;
+            }
+            
+            applyIndel(word, type) {
+                if (type === 'deletion') {
+                    const pos = Math.floor(Math.random() * word.length);
+                    return word.slice(0, pos) + word.slice(pos + 1);
+                } else {
+                    const pos = Math.floor(Math.random() * (word.length + 1));
+                    const nucleotides = ['A', 'G', 'C', 'T'];
+                    const randomNucleotide = nucleotides[Math.floor(Math.random() * 4)];
+                    const letter = this.getRandomLetterFromNucleotide(randomNucleotide);
+                    return word.slice(0, pos) + letter + word.slice(pos);
+                }
+            }
+            
+            getMutations() {
+                return this.mutations;
+            }
+        }
+
+        // Initialize the demo
+        const gocs = new SimpleGOCS();
+        const mutateBtn = document.getElementById('mutateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const originalText = document.getElementById('originalText');
+        const mutatedText = document.getElementById('mutatedText');
+        const mutationLog = document.getElementById('mutationLog');
+        
+        // Set default text
+        originalText.value = "The poet gazes at the ocean and sighs.";
+        
+        // Event listeners
+        mutateBtn.addEventListener('click', () => {
+            const result = gocs.mutateText(originalText.value);
+            mutatedText.value = result;
+            
+            // Show mutation log
+            const mutations = gocs.getMutations();
+            mutationLog.innerHTML = "<h3>Mutation Log:</h3>";
+            if (mutations.length > 0) {
+                const ul = document.createElement('ul');
+                mutations.forEach(mutation => {
+                    const li = document.createElement('li');
+                    li.textContent = mutation;
+                    ul.appendChild(li);
+                });
+                mutationLog.appendChild(ul);
+            } else {
+                mutationLog.innerHTML += "<p>No mutations applied.</p>";
+            }
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            originalText.value = "The poet gazes at the ocean and sighs.";
+            mutatedText.value = "";
+            mutationLog.innerHTML = "";
+        });
+
+        // Make the first tab visible by default
+        document.getElementById("Mutator").style.display = "block";
+    </script>
+</body>
+</html>
